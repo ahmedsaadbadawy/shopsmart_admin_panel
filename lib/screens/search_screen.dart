@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/product_model.dart';
 import '../providers/product_provider.dart';
-import '../services/assets_manager.dart';
 import 'package:dynamic_height_grid_view/dynamic_height_grid_view.dart';
 
 import '../widgets/product_widget.dart';
@@ -49,10 +48,10 @@ class _SearchScreenState extends State<SearchScreen> {
       child: Scaffold(
           appBar: AppBar(
             title: TitlesTextWidget(label: passedCategory ?? "Search"),
-            leading: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Image.asset(AssetsManager.shoppingCart),
-            ),
+            // leading: Padding(
+            //   padding: const EdgeInsets.all(8.0),
+            //   child: Image.asset(AssetsManager.shoppingCart),
+            // ),
           ),
           body: productList.isEmpty
               ? const Center(

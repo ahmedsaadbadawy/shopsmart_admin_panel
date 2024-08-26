@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../widgets/title_text.dart';
 
+import '../models/dashboard_btn_model.dart';
 import '../providers/theme_provider.dart';
 import '../services/assets_manager.dart';
+import '../widgets/dashboard_btn.dart';
 
 class DashboardScreen extends StatefulWidget {
   static const routeName = '/DashboardScreen';
@@ -37,8 +39,25 @@ class DashboardScreenState extends State<DashboardScreen> {
           ),
         ],
       ),
-      body: const Center(
-        child: TitlesTextWidget(label: "Dashboard Screen"),
+      body: GridView.count(
+        crossAxisCount: 2,
+        childAspectRatio: 1,
+        children: List.generate(
+          3,
+          (index) => Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: DashboardButtonsWidget(
+              title:
+                  DashboardButtonsModel.dashboardBtnList(context)[index].text,
+              imagePath: DashboardButtonsModel.dashboardBtnList(context)[index]
+                  .imagePath,
+              onPressed: () {
+                DashboardButtonsModel.dashboardBtnList(context)[index]
+                    .onPressed();
+              },
+            ),
+          ),
+        ),
       ),
     );
   }
