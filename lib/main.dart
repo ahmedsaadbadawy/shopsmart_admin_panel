@@ -1,5 +1,7 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shopsmart_admin_panel/firebase_options.dart';
 import 'consts/theme_data.dart';
 import 'providers/product_provider.dart';
 import 'providers/theme_provider.dart';
@@ -8,7 +10,11 @@ import 'screens/edit_upload_product_form.dart';
 import 'screens/inner_screens/orders/orders_screen.dart';
 import 'screens/search_screen.dart';
 
-void main() {
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const MyApp());
 }
 
