@@ -19,7 +19,6 @@ class DashboardScreenState extends State<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
-    //final size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
         title: const TitlesTextWidget(label: "Dashboard Screen"),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../screens/edit_upload_product_form.dart';
 import '../screens/inner_screens/orders/orders_screen.dart';
 import '../screens/search_screen.dart';
 
@@ -18,20 +19,31 @@ class DashboardButtonsModel {
         DashboardButtonsModel(
           text: "Add a new product",
           imagePath: AssetsManager.cloud,
-          onPressed: () {},
+          onPressed: () {
+            Navigator.pushNamed(
+              context,
+              EditOrUploadProductScreen.routeName,
+            );
+          },
         ),
         DashboardButtonsModel(
           text: "inspect all products",
           imagePath: AssetsManager.shoppingCart,
           onPressed: () {
-            Navigator.pushNamed(context, SearchScreen.routeName);
+            Navigator.pushNamed(
+              context,
+              SearchScreen.routeName,
+            );
           },
         ),
         DashboardButtonsModel(
           text: "View Orders",
           imagePath: AssetsManager.order,
           onPressed: () {
-            Navigator.pushNamed(context, OrdersScreenFree.routeName);
+            Navigator.pushNamed(
+              context,
+              OrdersScreenFree.routeName,
+            );
           },
         ),
       ];
