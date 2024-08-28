@@ -8,12 +8,12 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:uuid/uuid.dart';
+
 import '../consts/app_constants.dart';
+import '../consts/my_validators.dart';
 import '../models/product_model.dart';
 import '../services/my_app_method.dart';
 import '../widgets/subtitle_text.dart';
-
-import '../consts/my_validators.dart';
 import '../widgets/title_text.dart';
 import 'loading_manager.dart';
 
@@ -112,12 +112,14 @@ class _EditOrUploadProductScreenState extends State<EditOrUploadProductScreen> {
         setState(() {
           _isLoading = true;
         });
-        final ref = FirebaseStorage.instance
-            .ref()
-            .child("productsImages")
-            .child('${_titleController.text.trim()}.jpg');
-        await ref.putFile(File(_pickedImage!.path));
-        productImageUrl = await ref.getDownloadURL();
+        if (_pickedImage != null) {
+          final ref = FirebaseStorage.instance
+              .ref()
+              .child("productsImages")
+              .child('${_titleController.text.trim()}.jpg');
+          await ref.putFile(File(_pickedImage!.path));
+          productImageUrl = await ref.getDownloadURL();
+        }
 
         final productID = const Uuid().v4();
         await FirebaseFirestore.instance
@@ -182,7 +184,79 @@ class _EditOrUploadProductScreenState extends State<EditOrUploadProductScreen> {
       );
       return;
     }
-    if (isValid) {}
+    if (_categoryValue == null) {
+      MyAppMethods.showErrorORWarningDialog(
+        context: context,
+        subtitle: "Category is empty",
+        fct: () {},
+      );
+
+      return;
+    }
+    if (isValid) {
+      _formKey.currentState!.save();
+      try {
+        setState(() {
+          _isLoading = true;
+        });
+        if (_pickedImage != null) {
+          final ref = FirebaseStorage.instance
+              .ref()
+              .child("productsImages")
+              .child('${_titleController.text.trim()}.jpg');
+          await ref.putFile(File(_pickedImage!.path));
+          productImageUrl = await ref.getDownloadURL();
+        }
+
+        await FirebaseFirestore.instance
+            .collection("products")
+            .doc(widget.productModel!.productId)
+            .update({
+          'productId': widget.productModel!.productId,
+          'productTitle': _titleController.text,
+          'productPrice': _priceController.text,
+          'productImage': productImageUrl ?? productNetworkImage,
+          'productCategory': _categoryValue,
+          'productDescription': _descriptionController.text,
+          'productQuantity': _quantityController.text,
+          'createdAt': widget.productModel!.createdAt,
+        });
+        Fluttertoast.showToast(
+          msg: "Product has been edited",
+          toastLength: Toast.LENGTH_SHORT,
+          textColor: Colors.white,
+        );
+        if (!mounted) return;
+        await MyAppMethods.showErrorORWarningDialog(
+          isError: false,
+          context: context,
+          subtitle: "Clear form?",
+          fct: () {
+            clearForm();
+          },
+        );
+      } on FirebaseException catch (error) {
+        if (mounted) {
+          await MyAppMethods.showErrorORWarningDialog(
+            context: context,
+            subtitle: "An error has been occured ${error.message}",
+            fct: () {},
+          );
+        }
+      } catch (error) {
+        if (mounted) {
+          await MyAppMethods.showErrorORWarningDialog(
+            context: context,
+            subtitle: "An error has been occured $error",
+            fct: () {},
+          );
+        }
+      } finally {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
   }
 
   Future<void> localImagePicker() async {
@@ -191,11 +265,15 @@ class _EditOrUploadProductScreenState extends State<EditOrUploadProductScreen> {
       context: context,
       cameraFCT: () async {
         _pickedImage = await picker.pickImage(source: ImageSource.camera);
-        setState(() {});
+        setState(() {
+          productNetworkImage = null;
+        });
       },
       galleryFCT: () async {
         _pickedImage = await picker.pickImage(source: ImageSource.gallery);
-        setState(() {});
+        setState(() {
+          productNetworkImage = null;
+        });
       },
       removeFCT: () {
         setState(() {
@@ -318,7 +396,7 @@ class _EditOrUploadProductScreenState extends State<EditOrUploadProductScreen> {
                               ],
                             ),
                           )),
-                    ),
+                    )
                   ] else ...[
                     ClipRRect(
                       borderRadius: BorderRadius.circular(12),
@@ -332,7 +410,7 @@ class _EditOrUploadProductScreenState extends State<EditOrUploadProductScreen> {
                       ),
                     ),
                   ],
-                  if (_pickedImage != null && productNetworkImage != null) ...[
+                  if (_pickedImage != null || productNetworkImage != null) ...[
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
