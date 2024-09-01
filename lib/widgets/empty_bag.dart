@@ -8,7 +8,7 @@ class EmptyBagWidget extends StatelessWidget {
     super.key,
     required this.imagePath,
     required this.title,
-    required this.subtitle,
+    required this.subtitle, required String buttonText,
   });
   final String imagePath, title, subtitle;
   @override

@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shopsmart_admin_panel/firebase_options.dart';
+import 'package:shopsmart_admin_panel/providers/order_provider.dart';
 import 'consts/theme_data.dart';
 import 'providers/product_provider.dart';
 import 'providers/theme_provider.dart';
@@ -32,6 +33,9 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider(
           create: (_) => ProductProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => OrdersProvider(),
         ),
       ],
       child: Consumer<ThemeProvider>(builder: (
